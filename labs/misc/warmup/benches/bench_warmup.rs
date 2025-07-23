@@ -11,7 +11,7 @@ fn bench1(c: &mut Criterion) {
     }
 
     // benchmark
-    c.bench_function("solution 1000", |b| {
+    c.bench_function("warmup", |b| {
         b.iter(|| {
             let result = solution(&arr, N);
             black_box(result);
