@@ -19,10 +19,10 @@ pub const MAX_RANDOM: i32 = 100;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Default)]
 pub struct S {
-    pub i: i32,
     pub l: i64,
-    pub s: i16,
     pub d: f64,
+    pub i: i32,
+    pub s: i16,
     pub b: bool,
 }
 
@@ -48,6 +48,9 @@ impl PartialEq for S {
 impl Eq for S {}
 
 pub fn solution(arr: &mut [S]) {
+    use std::mem::size_of;
+    println!("Size of S: {}", size_of::<S>());
+
     // 1. shuffle
     let mut rd = thread_rng();
     arr.shuffle(&mut rd);
