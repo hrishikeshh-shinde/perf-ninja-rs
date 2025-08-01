@@ -19,55 +19,60 @@ fn filter_vertically(
     shift: usize,
 ) {
     let rounding = 1 << (shift - 1);
-
-    for c in 0..width {
-        // Top part of line, partial kernel
-        for r in 0..min(radius, height) {
-            // Accumulation
-            let mut dot = 0;
-            let mut sum = 0;
+    let len = width + 1;
+    let mut dot = vec![0; len];   
+    let mut sum = vec![0; len]; 
+    // Top part of line, partial kernel
+    for r in 0..min(radius, height) {
+        // Accumulation 
+        dot.fill(0);
+        sum.fill(0);
+        for c in 0..width {
             let mut p = radius - r;
             for y in 0..=min(r + radius, height - 1) {
                 let weight = kernel[p];
                 p += 1;
-                dot += input[y * width + c] as i32 * weight;
-                sum += weight;
+                dot[c] += input[y * width + c] as i32 * weight;
+                sum[c] += weight;
             }
 
             // Normalization
             // dot/sum fits in a u8, so f32 -> u8 is reasonable here
-            let value = dot as f32 / sum as f32 + 0.5;
+            let value = dot[c] as f32 / sum[c] as f32 + 0.5;
             output[r * width + c] = value as u8;
         }
+    }
 
-        // Middle part of computations with full kernel
-        for r in radius..(height - radius) {
-            // Accumulation
-            let mut dot = 0;
+    // Middle part of computations with full kernel
+    for r in radius..(height - radius) {
+        // Accumulation
+        dot.fill(0);
+        for c in 0..width {
             for i in 0..(radius + 1 + radius) {
-                dot += input[(r - radius + i) * width + c] as i32 * kernel[i];
+                dot[c] += input[(r - radius + i) * width + c] as i32 * kernel[i];
             }
-
             // Fast shift instead of division
-            let value: i32 = (dot + rounding) >> shift;
+            let value: i32 = (dot[c] + rounding) >> shift;
             output[r * width + c] = value as u8;
         }
+    }
 
-        // Bottom part of line, partial kernel
-        for r in std::cmp::max(radius, height - radius)..height {
-            // Accumulation
-            let mut dot = 0;
-            let mut sum = 0;
+    // Bottom part of line, partial kernel
+    for r in std::cmp::max(radius, height - radius)..height {
+        // Accumulation
+        dot.fill(0);
+        sum.fill(0);
+        for c in 0..width {
             let mut p = 0;
             for y in (r - radius)..height {
                 let weight = kernel[p];
                 p += 1;
-                dot += input[y * width + c] as i32 * weight;
-                sum += weight;
+                dot[c] += input[y * width + c] as i32 * weight;
+                sum[c] += weight;
             }
 
             // Normalization
-            let value = dot as f32 / sum as f32 + 0.5;
+            let value = dot[c] as f32 / sum[c] as f32 + 0.5;
             output[r * width + c] = value as u8;
         }
     }
