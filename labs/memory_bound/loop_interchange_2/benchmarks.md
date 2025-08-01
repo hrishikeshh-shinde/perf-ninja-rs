@@ -18,3 +18,9 @@ Performance has improved.
 ### 3. **Corrected `p` Indexing in Kernel Convolution**
 - Ensured that the kernel index `p` was reset **inside** the column loop to avoid kernel misalignment.
 - This was a correctness fix, especially important in the top and bottom edge cases where partial kernels are applied.
+
+
+time:   [40.533 ms 40.546 ms 40.560 ms]
+change: [-40.864% -40.829% -40.795%] (p = 0.00 < 0.05)
+Performance has improved.
+Reordered nested loops to access input rows (memory-contiguous) first, columns second.

@@ -47,10 +47,14 @@ fn filter_vertically(
     for r in radius..(height - radius) {
         // Accumulation
         dot.fill(0);
-        for c in 0..width {
-            for i in 0..(radius + 1 + radius) {
+        
+        for i in 0..(radius + 1 + radius) {
+            for c in 0..width {
                 dot[c] += input[(r - radius + i) * width + c] as i32 * kernel[i];
             }
+        }
+            
+        for c in 0..width{
             // Fast shift instead of division
             let value: i32 = (dot[c] + rounding) >> shift;
             output[r * width + c] = value as u8;
