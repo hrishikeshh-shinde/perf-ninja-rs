@@ -2,10 +2,10 @@ use crate::{MAX_RANDOM, MIN_RANDOM, N, S};
 
 pub fn create_entry(first_value: i32, second_value: i32) -> S {
     S {
-        l: (first_value * second_value) as i64,
-        d: first_value as f64 / MAX_RANDOM as f64,
-        i: first_value,
-        s: second_value as i16,
+        l: (first_value * second_value) as i16,
+        d: first_value as f32 / MAX_RANDOM as f32,
+        i: first_value as u8,
+        s: second_value as u8,
         b: first_value < second_value,
     }
 }

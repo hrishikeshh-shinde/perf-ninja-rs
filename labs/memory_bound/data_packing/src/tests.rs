@@ -27,23 +27,23 @@ fn check_entry(first: i32, second: i32) -> bool {
 
     let mut is_valid = true;
 
-    if entry.i != first {
+    if entry.i != first  as u8{
         report_error("i", entry.i, first, first, second);
         is_valid = false;
     }
 
-    if entry.s != second as i16 {
+    if entry.s != second as u8 {
         report_error("s", entry.s, second, first, second);
         is_valid = false;
     }
 
-    let expected_l = (first * second) as i64;
+    let expected_l = (first * second) as i16;
     if entry.l != expected_l {
         report_error("l", entry.l, expected_l, first, second);
         is_valid = false;
     }
 
-    let expected_d = first as f64 / MAX_RANDOM as f64;
+    let expected_d = first as f32 / MAX_RANDOM as f32;
     if (entry.d - expected_d).abs() > 0.001 {
         report_error("d", entry.d, expected_d, first, second);
         is_valid = false;

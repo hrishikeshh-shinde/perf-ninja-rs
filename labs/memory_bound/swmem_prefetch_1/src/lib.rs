@@ -1,7 +1,9 @@
 #[cfg(test)]
 mod tests;
 
-pub const HASH_MAP_SIZE: usize = 32 * 1024 * 1024 - 5;
+const _MM_HINT_T0: i32 = 3;
+
+pub const HASH_MAP_SIZE: usize = 32 * 1024 * 1024 - 5; //hash map conatins around 32M Integers
 const NUMBER_OF_LOOKUPS: usize = 1024 * 1024;
 
 const UNUSED: i32 = i32::MAX;
@@ -42,17 +44,50 @@ fn get_sum_of_digits(mut n: i32) -> i32 {
     sum
 }
 
+// Prefetch function for x86_64
+#[cfg(all(target_arch = "x86_64", target_feature = "sse"))]
+#[inline]
+pub unsafe fn prefetch<T>(addr: *const T) {
+    use core::arch::x86_64::{_mm_prefetch, _MM_HINT_T0};
+    _mm_prefetch(addr as *const i8, _MM_HINT_T0);
+}
+
+// Dummy fallback for other platforms
+#[cfg(not(all(target_arch = "x86_64", target_feature = "sse")))]
+#[inline]
+pub unsafe fn prefetch<T>(_addr: *const T) {
+    // No-op on unsupported platforms
+}
+
 pub fn solution(hash_map: &HashMapT, lookups: &[i32]) -> i32 {
     let mut result = 0;
+    let prefetch_distance = 8;
 
-    for &val in lookups {
+
+    for i in 0..lookups.len() {
+        if i + prefetch_distance < lookups.len() {
+            // Software prefetch to T0 cache
+            unsafe {
+                let future = &lookups[i + prefetch_distance];
+                prefetch(future as *const _);
+            }
+        }
+
+        let val = lookups[i];
         if hash_map.find(val) {
             result += get_sum_of_digits(val);
         }
     }
 
+    // for &val in lookups { //we know the values in advance
+    //     if hash_map.find(val) { //most cache misses happen here
+    //         result += get_sum_of_digits(val);
+    //     }
+    // }
+
     result
 }
+
 
 pub fn init(hash_map: &mut HashMapT) -> Vec<i32> {
     use rand::prelude::*;

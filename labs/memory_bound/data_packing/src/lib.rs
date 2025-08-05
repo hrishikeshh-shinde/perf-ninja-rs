@@ -19,11 +19,11 @@ pub const MAX_RANDOM: i32 = 100;
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Default)]
 pub struct S {
-    pub l: i64,
-    pub d: f64,
-    pub i: i32,
-    pub s: i16,
-    pub b: bool,
+    pub d: f32, //4 bytes
+    pub l: i16, //max-value = 10^4 so 2 bytes are enough
+    pub i: u8, //max-value = 100 so 1 byte enough
+    pub s: u8, //max-value = 100 so 1 byte enough
+    pub b: bool, //1byte
 }
 
 // C++ version overloads '<' operator like this:
@@ -48,8 +48,10 @@ impl PartialEq for S {
 impl Eq for S {}
 
 pub fn solution(arr: &mut [S]) {
-    use std::mem::size_of;
-    println!("Size of S: {}", size_of::<S>());
+    // use std::mem::{size_of, align_of};
+    // println!("Size of S: {}", size_of::<S>());
+    // println!("Align of S: {}", align_of::<S>());
+    
 
     // 1. shuffle
     let mut rd = thread_rng();
