@@ -21,6 +21,7 @@ These are grouped by category. I've implemented and benchmarked all of these loc
 - Loop Interchange 2
 - Loop Tiling
 - Software Memory Prefetching
+- False Sharing
 
 ### ✅ Bad Speculation:
 
